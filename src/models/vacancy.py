@@ -1,4 +1,5 @@
 from typing import Optional, List
+import re
 
 
 class Vacancy:
@@ -27,9 +28,13 @@ class Vacancy:
         return url
 
     @staticmethod
-    def _validate_salary(salary: Optional[dict]) -> str:
+    def _validate_salary(salary: Optional[dict | str]) -> str:
         """Валидация зарплаты."""
-        if not salary or not isinstance(salary, dict):
+        if not salary:
+            return "Зарплата не указана"
+        if isinstance(salary, str):
+            return salary  # Уже отформатированная строка
+        if not isinstance(salary, dict):
             return "Зарплата не указана"
         salary_from = salary.get('from')
         salary_to = salary.get('to')
@@ -50,7 +55,9 @@ class Vacancy:
             return "Описание не указано"
         if not description.strip():
             return "Описание не указано"
-        return description
+        # Удаляем HTML-теги
+        cleaned = re.sub(r'<[^>]+>', '', description)
+        return cleaned.strip() or "Описание не указано"
 
     @property
     def salary(self) -> str:
@@ -83,9 +90,9 @@ class Vacancy:
         """Преобразование вакансии в словарь."""
         return {
             'name': self._name,
-            'url': self._url,
-            'salary': self._salary,
-            'description': self._description
+            'alternate_url': self._url,  # Совместимость с API
+            'salary': self._salary,  # Сохраняем как строку
+            'snippet': {'requirement': self._description}
         }
 
     @classmethod
@@ -94,9 +101,9 @@ class Vacancy:
         result = []
         for vacancy in vacancies:
             name = vacancy.get('name', '')
-            url = vacancy.get('alternate_url', '')
+            url = vacancy.get('alternate_url') or vacancy.get('url', '')
             salary = vacancy.get('salary')
-            description = vacancy.get('snippet', {}).get('requirement')
+            description = vacancy.get('snippet', {}).get('requirement') or vacancy.get('description', '')
             try:
                 result.append(cls(name, url, salary, description))
             except ValueError:
