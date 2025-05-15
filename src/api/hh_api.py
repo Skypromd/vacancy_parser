@@ -9,7 +9,7 @@ class HeadHunterAPI(AbstractAPI):
     def __init__(self):
         self._url = 'https://api.hh.ru/vacancies'
         self._headers = {
-            'User-Agent': 'VacancyParser/1.0 (your_real_email@example.com)',  # Убедитесь, что email актуален
+            'User-Agent': 'VacancyParser/1.0 (skypromd@gmail.com)',  # Ваш реальный email
             'Accept': 'application/json'
         }
         self._params = {'text': '', 'page': 0, 'per_page': 100, 'area': '113'}  # Россия
@@ -18,7 +18,7 @@ class HeadHunterAPI(AbstractAPI):
     def connect(self) -> None:
         """Проверка подключения к API."""
         try:
-            response = requests.get('https://api.hh.ru/areas', headers=self._headers, timeout=5)
+            response = requests.get('https://api.hh.ru/dictionaries', headers=self._headers, timeout=5)
             if response.status_code != 200:
                 raise ConnectionError(f"Ошибка подключения: {response.status_code}")
         except requests.RequestException as e:
