@@ -57,12 +57,12 @@ class TestVacancy(unittest.TestCase):
         self.assertEqual(vacancy.salary, "до 150000 RUR")
 
     def test_invalid_description_empty(self):
-        with self.assertRaises(ValueError):
-            Vacancy("Test", "url", None, "")
+        vacancy = Vacancy("Test", "url", None, "")
+        self.assertEqual(vacancy._description, "Описание не указано")
 
     def test_invalid_description_none(self):
-        with self.assertRaises(ValueError):
-            Vacancy("Test", "url", None, None)
+        vacancy = Vacancy("Test", "url", None, None)
+        self.assertEqual(vacancy._description, "Описание не указано")
 
     def test_invalid_comparison(self):
         v1 = Vacancy("V1", "url", {"from": 100000, "to": 100000}, "desc")

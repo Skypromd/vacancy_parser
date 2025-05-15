@@ -44,10 +44,12 @@ class Vacancy:
         return "Зарплата не указана"
 
     @staticmethod
-    def _validate_description(description: str) -> str:
+    def _validate_description(description: Optional[str]) -> str:
         """Валидация описания."""
-        if not description or not isinstance(description, str):
-            raise ValueError("Описание должно быть непустой строкой")
+        if description is None or not isinstance(description, str):
+            return "Описание не указано"
+        if not description.strip():
+            return "Описание не указано"
         return description
 
     @property
@@ -94,7 +96,7 @@ class Vacancy:
             name = vacancy.get('name', '')
             url = vacancy.get('alternate_url', '')
             salary = vacancy.get('salary')
-            description = vacancy.get('snippet', {}).get('requirement', '')
+            description = vacancy.get('snippet', {}).get('requirement')
             try:
                 result.append(cls(name, url, salary, description))
             except ValueError:
