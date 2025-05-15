@@ -56,9 +56,11 @@ class TestVacancy(unittest.TestCase):
         )
         self.assertEqual(vacancy.salary, "до 150000 RUR")
 
-    def test_invalid_description(self):
+    def test_invalid_description_empty(self):
         with self.assertRaises(ValueError):
             Vacancy("Test", "url", None, "")
+
+    def test_invalid_description_none(self):
         with self.assertRaises(ValueError):
             Vacancy("Test", "url", None, None)
 
@@ -84,7 +86,7 @@ class TestVacancy(unittest.TestCase):
 
     def test_cast_to_object_list_invalid(self):
         vacancies = [
-            {'name': '', 'alternate_url': 'url', 'salary': None, 'snippet': {'requirement': 'Test'}},  # Invalid name
+            {'name': '', 'alternate_url': 'url', 'salary': None, 'snippet': {'requirement': 'Test'}},
             {'name': 'Test', 'alternate_url': 'url', 'salary': None, 'snippet': {'requirement': 'Test'}}
         ]
         result = Vacancy.cast_to_object_list(vacancies)
