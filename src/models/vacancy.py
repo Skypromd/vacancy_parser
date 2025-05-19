@@ -7,24 +7,24 @@ class Vacancy:
 
     __slots__ = ('_name', '_url', '_salary', '_description')
 
-    def __init__(self, name: str, url: str, salary: Optional[dict], description: str):
+    def __init__(self, name: str, url: str, salary: Optional[dict | str], description: Optional[str]):
         self._name = self._validate_name(name)
         self._url = self._validate_url(url)
         self._salary = self._validate_salary(salary)
         self._description = self._validate_description(description)
 
     @staticmethod
-    def _validate_name(name: str) -> str:
+    def _validate_name(name: Optional[str]) -> str:
         """Валидация названия вакансии."""
-        if not name or not isinstance(name, str):
-            raise ValueError("Название вакансии должно быть непустой строкой")
+        if name is None or not isinstance(name, str) or not name.strip():
+            return "Название не указано"
         return name
 
     @staticmethod
-    def _validate_url(url: str) -> str:
+    def _validate_url(url: Optional[str]) -> str:
         """Валидация URL вакансии."""
-        if not url or not isinstance(url, str):
-            raise ValueError("URL должен быть непустой строкой")
+        if url is None or not isinstance(url, str) or not url.strip():
+            return "URL не указан"
         return url
 
     @staticmethod
@@ -33,7 +33,7 @@ class Vacancy:
         if not salary:
             return "Зарплата не указана"
         if isinstance(salary, str):
-            return salary  # Уже отформатированная строка
+            return salary
         if not isinstance(salary, dict):
             return "Зарплата не указана"
         salary_from = salary.get('from')
@@ -55,7 +55,6 @@ class Vacancy:
             return "Описание не указано"
         if not description.strip():
             return "Описание не указано"
-        # Удаляем HTML-теги
         cleaned = re.sub(r'<[^>]+>', '', description)
         return cleaned.strip() or "Описание не указано"
 
@@ -90,8 +89,8 @@ class Vacancy:
         """Преобразование вакансии в словарь."""
         return {
             'name': self._name,
-            'alternate_url': self._url,  # Совместимость с API
-            'salary': self._salary,  # Сохраняем как строку
+            'alternate_url': self._url,
+            'salary': self._salary,
             'snippet': {'requirement': self._description}
         }
 
@@ -104,8 +103,5 @@ class Vacancy:
             url = vacancy.get('alternate_url') or vacancy.get('url', '')
             salary = vacancy.get('salary')
             description = vacancy.get('snippet', {}).get('requirement') or vacancy.get('description', '')
-            try:
-                result.append(cls(name, url, salary, description))
-            except ValueError:
-                continue
+            result.append(cls(name, url, salary, description))
         return result

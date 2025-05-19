@@ -27,16 +27,16 @@ class TestVacancy(unittest.TestCase):
         self.assertTrue(v1 < v2)
 
     def test_invalid_name(self):
-        with self.assertRaises(ValueError):
-            Vacancy("", "url", None, "desc")
-        with self.assertRaises(ValueError):
-            Vacancy(None, "url", None, "desc")
+        vacancy = Vacancy("", "url", None, "desc")
+        self.assertEqual(vacancy.name, "Название не указано")
+        vacancy = Vacancy(None, "url", None, "desc")
+        self.assertEqual(vacancy.name, "Название не указано")
 
     def test_invalid_url(self):
-        with self.assertRaises(ValueError):
-            Vacancy("Test", "", None, "desc")
-        with self.assertRaises(ValueError):
-            Vacancy("Test", None, None, "desc")
+        vacancy = Vacancy("Test", "", None, "desc")
+        self.assertEqual(vacancy._url, "URL не указан")
+        vacancy = Vacancy("Test", None, None, "desc")
+        self.assertEqual(vacancy._url, "URL не указан")
 
     def test_salary_only_from(self):
         vacancy = Vacancy(
@@ -79,19 +79,18 @@ class TestVacancy(unittest.TestCase):
         result = vacancy.to_dict()
         self.assertEqual(result, {
             'name': "Test",
-            'url': "url",
+            'alternate_url': "url",
             'salary': "100000-100000 RUR",
-            'description': "desc"
+            'snippet': {'requirement': "desc"}
         })
 
     def test_cast_to_object_list_invalid(self):
         vacancies = [
-            {'name': '', 'alternate_url': 'url', 'salary': None, 'snippet': {'requirement': 'Test'}},
+            {'name': '', 'alternate_url': '', 'salary': None, 'snippet': {'requirement': 'Test'}},
             {'name': 'Test', 'alternate_url': 'url', 'salary': None, 'snippet': {'requirement': 'Test'}}
         ]
         result = Vacancy.cast_to_object_list(vacancies)
-        self.assertEqual(len(result), 1)
-        self.assertEqual(result[0].name, "Test")
-
-if __name__ == "__main__":
-    unittest.main()
+        self.assertEqual(len(result), 2)
+        self.assertEqual(result[0].name, "Название не указано")
+        self.assertEqual(result[0]._url, "URL не указан")
+        self.assertEqual(result[1].name, "Test")
