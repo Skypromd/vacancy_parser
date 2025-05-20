@@ -1,4 +1,4 @@
-from typing import Optional, List
+from typing import Optional
 import re
 
 
@@ -7,7 +7,8 @@ class Vacancy:
 
     __slots__ = ('_name', '_url', '_salary', '_description')
 
-    def __init__(self, name: str, url: str, salary: Optional[dict | str], description: Optional[str]):
+    def __init__(self, name: str, url: str, salary: Optional[dict | str],
+                 description: Optional[str]):
         self._name = self._validate_name(name)
         self._url = self._validate_url(url)
         self._salary = self._validate_salary(salary)
@@ -70,9 +71,9 @@ class Vacancy:
         """Сравнение вакансий по зарплате."""
         if not isinstance(other, Vacancy):
             raise TypeError("Сравнение возможно только с объектом Vacancy")
-        return self._parse_salary() < other._parse_salary()
+        return self.parse_salary() < other.parse_salary()
 
-    def _parse_salary(self) -> float:
+    def parse_salary(self) -> float:
         """Парсинг зарплаты для сравнения."""
         if "не указана" in self._salary:
             return 0
@@ -95,13 +96,14 @@ class Vacancy:
         }
 
     @classmethod
-    def cast_to_object_list(cls, vacancies: List[dict]) -> List['Vacancy']:
+    def cast_to_object_list(cls, vacancies: list[dict]) -> list['Vacancy']:
         """Преобразование списка словарей в список объектов Vacancy."""
         result = []
         for vacancy in vacancies:
             name = vacancy.get('name', '')
             url = vacancy.get('alternate_url') or vacancy.get('url', '')
             salary = vacancy.get('salary')
-            description = vacancy.get('snippet', {}).get('requirement') or vacancy.get('description', '')
+            description = vacancy.get('snippet', {}).get('requirement') or \
+                          vacancy.get('description', '')
             result.append(cls(name, url, salary, description))
         return result

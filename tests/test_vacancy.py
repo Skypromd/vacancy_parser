@@ -1,6 +1,7 @@
 import unittest
 from src.models.vacancy import Vacancy
 
+
 class TestVacancy(unittest.TestCase):
     def test_valid_vacancy(self):
         vacancy = Vacancy(
@@ -71,8 +72,8 @@ class TestVacancy(unittest.TestCase):
 
     def test_parse_salary_error(self):
         vacancy = Vacancy("Test", "url", None, "desc")
-        vacancy._salary = "invalid"  # Симулируем некорректную зарплату
-        self.assertEqual(vacancy._parse_salary(), 0)
+        vacancy._salary = "invalid"
+        self.assertEqual(vacancy.parse_salary(), 0)
 
     def test_to_dict(self):
         vacancy = Vacancy("Test", "url", {"from": 100000, "to": 100000}, "desc")
@@ -86,11 +87,25 @@ class TestVacancy(unittest.TestCase):
 
     def test_cast_to_object_list_invalid(self):
         vacancies = [
-            {'name': '', 'alternate_url': '', 'salary': None, 'snippet': {'requirement': 'Test'}},
-            {'name': 'Test', 'alternate_url': 'url', 'salary': None, 'snippet': {'requirement': 'Test'}}
+            {
+                'name': '',
+                'alternate_url': '',
+                'salary': None,
+                'snippet': {'requirement': 'Test'}
+            },
+            {
+                'name': 'Test',
+                'alternate_url': 'url',
+                'salary': None,
+                'snippet': {'requirement': 'Test'}
+            }
         ]
         result = Vacancy.cast_to_object_list(vacancies)
         self.assertEqual(len(result), 2)
         self.assertEqual(result[0].name, "Название не указано")
         self.assertEqual(result[0]._url, "URL не указан")
         self.assertEqual(result[1].name, "Test")
+
+
+if __name__ == "__main__":
+    unittest.main()
