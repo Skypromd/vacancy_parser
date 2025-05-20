@@ -9,6 +9,7 @@ class TestUserInteraction(unittest.TestCase):
         with patch('builtins.print') as mock_print:
             user_interaction()
             mock_print.assert_any_call("Выход из программы.")
+            mock_input.assert_called()
 
     @patch('src.api.hh_api.HeadHunterAPI.get_vacancies')
     @patch('builtins.input', side_effect=['1', 'Python', '5'])
@@ -24,6 +25,7 @@ class TestUserInteraction(unittest.TestCase):
         with patch('builtins.print') as mock_print:
             user_interaction()
             mock_print.assert_any_call("Найдено 1 вакансий. Сохранено в файл.")
+            mock_input.assert_called()
 
     @patch('src.storage.json_storage.JSONStorage.get_vacancies')
     @patch('builtins.input', side_effect=['2', '2', '5'])
@@ -45,6 +47,7 @@ class TestUserInteraction(unittest.TestCase):
         with patch('builtins.print') as mock_print:
             user_interaction()
             mock_print.assert_any_call("1. V2")
+            mock_input.assert_called()
 
     @patch('src.storage.json_storage.JSONStorage.get_vacancies')
     @patch('builtins.input', side_effect=['3', 'Test', '5'])
@@ -60,6 +63,7 @@ class TestUserInteraction(unittest.TestCase):
         with patch('builtins.print') as mock_print:
             user_interaction()
             mock_print.assert_any_call("1. V1")
+            mock_input.assert_called()
 
     @patch('src.storage.json_storage.JSONStorage.get_vacancies')
     @patch('builtins.input', side_effect=['4', '100000-200000', '5'])
@@ -75,6 +79,7 @@ class TestUserInteraction(unittest.TestCase):
         with patch('builtins.print') as mock_print:
             user_interaction()
             mock_print.assert_any_call("1. V1")
+            mock_input.assert_called()
 
     @patch('src.storage.json_storage.JSONStorage.get_vacancies')
     @patch('builtins.input', side_effect=['4', '100000', '5'])
@@ -90,15 +95,18 @@ class TestUserInteraction(unittest.TestCase):
         with patch('builtins.print') as mock_print:
             user_interaction()
             mock_print.assert_any_call("1. V1")
+            mock_input.assert_called()
 
     @patch('builtins.input', side_effect=[UnicodeDecodeError('utf-8', b'\xd0', 0, 1, 'invalid'), '5'])
     def test_unicode_decode_error(self, mock_input):
         with patch('builtins.print') as mock_print:
             user_interaction()
             mock_print.assert_any_call(
-                "Ошибка ввода: используйте символы UTF-8 (например, латиницу)."
+                "Ошибка ввода: используйте символы UTF-8 "
+                "(например, латиницу)."
             )
             mock_print.assert_any_call("Выход из программы.")
+            mock_input.assert_called()
 
 
 if __name__ == "__main__":
