@@ -99,11 +99,18 @@ class Vacancy:
     def cast_to_object_list(cls, vacancies: list[dict]) -> list['Vacancy']:
         """Преобразование списка словарей в список объектов Vacancy."""
         result = []
-        for vacancy in vacancies:
+        for i, vacancy in enumerate(vacancies):
             name = vacancy.get('name', '')
             url = vacancy.get('alternate_url') or vacancy.get('url', '')
             salary = vacancy.get('salary')
             description = vacancy.get('snippet', {}).get('requirement') or \
                           vacancy.get('description', '')
-            result.append(cls(name, url, salary, description))
+            try:
+                obj = cls(name, url, salary, description)
+                result.append(obj)
+            except Exception as e:
+                print(f"Ошибка при обработке вакансии #{i}: данные={vacancy}, "
+                      f"тип ошибки={type(e).__name__}, сообщение={str(e)}, "
+                      f"name={name}, url={url}")
+                continue
         return result
