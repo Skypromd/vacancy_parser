@@ -1,9 +1,8 @@
 from src.api.hh_api import HeadHunterAPI
 from src.models.vacancy import Vacancy
 from src.storage.json_storage import JSONStorage
-from src.utils.helpers import sort_vacancies, get_top_vacancies,
-
-filter_vacancies, print_vacancies
+from src.utils.helpers import sort_vacancies, get_top_vacancies, \
+    filter_vacancies, print_vacancies
 
 
 def user_interaction():

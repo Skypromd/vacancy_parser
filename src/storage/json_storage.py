@@ -34,7 +34,8 @@ class JSONStorage(AbstractFileStorage):
               f"url={data.get('alternate_url')}, "
               f"type(url)={type(data.get('alternate_url'))}")
         self._load_data()
-        if not any(v.get('alternate_url') == data.get('alternate_url') for v in self.data):
+        if not any(v.get('alternate_url') == data.get('alternate_url')
+                   for v in self.data):
             self.data.append(data)
         with open(self._file_path, 'w', encoding='utf-8') as file:
             json.dump(self.data, file, ensure_ascii=False, indent=4)
