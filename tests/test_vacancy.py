@@ -8,7 +8,7 @@ class TestVacancy(unittest.TestCase):
             name="Python Developer",
             url="https://hh.ru/vacancy/123",
             salary={"from": 100000, "to": 150000, "currency": "RUR"},
-            description="Требуется опыт"
+            description="Требуется опыт",
         )
         self.assertEqual(vacancy.name, "Python Developer")
         self.assertEqual(vacancy.salary, "100000-150000 RUR")
@@ -18,7 +18,7 @@ class TestVacancy(unittest.TestCase):
             name="Developer",
             url="https://hh.ru/vacancy/456",
             salary=None,
-            description="Без опыта"
+            description="Без опыта",
         )
         self.assertEqual(vacancy.salary, "Зарплата не указана")
 
@@ -44,7 +44,7 @@ class TestVacancy(unittest.TestCase):
             name="Test",
             url="url",
             salary={"from": 100000, "to": None, "currency": "RUR"},
-            description="desc"
+            description="desc",
         )
         self.assertEqual(vacancy.salary, "от 100000 RUR")
 
@@ -53,7 +53,7 @@ class TestVacancy(unittest.TestCase):
             name="Test",
             url="url",
             salary={"from": None, "to": 150000, "currency": "RUR"},
-            description="desc"
+            description="desc",
         )
         self.assertEqual(vacancy.salary, "до 150000 RUR")
 
@@ -66,8 +66,9 @@ class TestVacancy(unittest.TestCase):
         self.assertEqual(vacancy._description, "Описание не указано")
 
     def test_invalid_comparison(self):
+        v1 = Vacancy("V1", "url", {"from": 100000, "to": 100000}, "desc")
         with self.assertRaises(TypeError):
-            pass
+            v1 < "not a vacancy"
 
     def test_parse_salary_error(self):
         vacancy = Vacancy("Test", "url", None, "desc")
@@ -77,27 +78,30 @@ class TestVacancy(unittest.TestCase):
     def test_to_dict(self):
         vacancy = Vacancy("Test", "url", {"from": 100000, "to": 100000}, "desc")
         result = vacancy.to_dict()
-        self.assertEqual(result, {
-            'name': "Test",
-            'alternate_url': "url",
-            'salary': "100000-100000 RUR",
-            'snippet': {'requirement': "desc"}
-        })
+        self.assertEqual(
+            result,
+            {
+                "name": "Test",
+                "alternate_url": "url",
+                "salary": "100000-100000 RUR",
+                "snippet": {"requirement": "desc"},
+            },
+        )
 
     def test_cast_to_object_list_invalid(self):
         vacancies = [
             {
-                'name': '',
-                'alternate_url': '',
-                'salary': None,
-                'snippet': {'requirement': 'Test'}
+                "name": "",
+                "alternate_url": "",
+                "salary": None,
+                "snippet": {"requirement": "Test"},
             },
             {
-                'name': 'Test',
-                'alternate_url': 'url',
-                'salary': None,
-                'snippet': {'requirement': 'Test'}
-            }
+                "name": "Test",
+                "alternate_url": "url",
+                "salary": None,
+                "snippet": {"requirement": "Test"},
+            },
         ]
         result = Vacancy.cast_to_object_list(vacancies)
         self.assertEqual(len(result), 2)
@@ -108,10 +112,10 @@ class TestVacancy(unittest.TestCase):
     def test_search_vacancy_scenario(self):
         """Тест, имитирующий сценарий из test_search_vacancies."""
         vacancy_data = {
-            'name': 'Test',
-            'alternate_url': 'https://hh.ru/vacancy/1',
-            'salary': None,
-            'snippet': {'requirement': 'Test'}
+            "name": "Test",
+            "alternate_url": "https://hh.ru/vacancy/1",
+            "salary": None,
+            "snippet": {"requirement": "Test"},
         }
         vacancies = [vacancy_data]
         result = Vacancy.cast_to_object_list(vacancies)
