@@ -7,8 +7,13 @@ class Vacancy:
 
     __slots__ = ('_name', '_url', '_salary', '_description')
 
-    def __init__(self, name: str, url: str, salary: Optional[dict | str],
-                 description: Optional[str]):
+    def __init__(self, name: str, url: str, salary: Optional[dict | str], description: Optional[str]):
+        print(f"Инициализация Vacancy: name={name}, url={url}, type(url)={type(url)}, "
+              f"salary={salary}, type(salary)={type(salary)}, description={description}, "
+              f"type(description)={type(description)}")
+        if url is None or (isinstance(url, str) and not url.strip()):
+            url = "URL не указан"
+            print(f"Предупреждение: url заменён на 'URL не указан' из-за: {url}, type={type(url)}")
         self._name = self._validate_name(name)
         self._url = self._validate_url(url)
         self._salary = self._validate_salary(salary)
@@ -17,20 +22,23 @@ class Vacancy:
     @staticmethod
     def _validate_name(name: Optional[str]) -> str:
         """Валидация названия вакансии."""
+        print(f"Валидация name: {name}, type={type(name)}")
         if name is None or not isinstance(name, str) or not name.strip():
             return "Название не указано"
         return name
 
     @staticmethod
-    def _validate_url(url: Optional[str]) -> str:
+    def _validate_url(url: str) -> str:
         """Валидация URL вакансии."""
-        if url is None or not isinstance(url, str) or not url.strip():
-            return "URL не указан"
+        print(f"Валидация url: {url}, type={type(url)}")
+        if not url or not isinstance(url, str):
+            raise ValueError(f"URL должен быть непустой строкой, получено: {url}, type={type(url)}")
         return url
 
     @staticmethod
     def _validate_salary(salary: Optional[dict | str]) -> str:
         """Валидация зарплаты."""
+        print(f"Валидация salary: {salary}, type={type(salary)}")
         if not salary:
             return "Зарплата не указана"
         if isinstance(salary, str):
@@ -52,6 +60,7 @@ class Vacancy:
     @staticmethod
     def _validate_description(description: Optional[str]) -> str:
         """Валидация описания."""
+        print(f"Валидация description: {description}, type={type(description)}")
         if description is None or not isinstance(description, str):
             return "Описание не указано"
         if not description.strip():
@@ -101,16 +110,23 @@ class Vacancy:
         result = []
         for i, vacancy in enumerate(vacancies):
             name = vacancy.get('name', '')
-            url = vacancy.get('alternate_url') or vacancy.get('url', '')
+            # Улучшенная обработка url
+            url = vacancy.get('alternate_url')
+            if url is None or (isinstance(url, str) and not url.strip()):
+                url = vacancy.get('url', '')
+                if url is None or (isinstance(url, str) and not url.strip()):
+                    url = "URL не указан"
             salary = vacancy.get('salary')
             description = vacancy.get('snippet', {}).get('requirement') or \
                           vacancy.get('description', '')
+            print(f"Обработка вакансии #{i}: данные={vacancy}, name={name}, url={url}, "
+                  f"type(url)={type(url)}, salary={salary}, description={description}")
             try:
                 obj = cls(name, url, salary, description)
                 result.append(obj)
             except Exception as e:
                 print(f"Ошибка при обработке вакансии #{i}: данные={vacancy}, "
-                      f"тип ошибки={type(e).__name__}, сообщение={str(e)}, "
-                      f"name={name}, url={url}")
+                      f"тип ошибки={type(e).__name__}, сообщение={str(e)}")
                 continue
+        print(f"Результат cast_to_object_list: количество объектов={len(result)}")
         return result
