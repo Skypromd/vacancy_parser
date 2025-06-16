@@ -110,12 +110,7 @@ class Vacancy:
         result = []
         for i, vacancy in enumerate(vacancies):
             name = vacancy.get('name', '')
-            # Улучшенная обработка url
-            url = vacancy.get('alternate_url')
-            if url is None or (isinstance(url, str) and not url.strip()):
-                url = vacancy.get('url', '')
-                if url is None or (isinstance(url, str) and not url.strip()):
-                    url = "URL не указан"
+            url = vacancy.get('alternate_url') or vacancy.get('url', '')
             salary = vacancy.get('salary')
             description = vacancy.get('snippet', {}).get('requirement') or \
                           vacancy.get('description', '')
@@ -130,3 +125,4 @@ class Vacancy:
                 continue
         print(f"Результат cast_to_object_list: количество объектов={len(result)}")
         return result
+
