@@ -1,21 +1,20 @@
 from abc import ABC, abstractmethod
-from typing import List, Dict
 
 
-class AbstractStorage(ABC):
-    """Абстрактный класс для работы с хранилищем вакансий."""
+class AbstractFileStorage(ABC):
+    """Абстрактный класс для работы с файлами."""
 
     @abstractmethod
-    def add_vacancy(self, vacancy: Dict) -> None:
-        """Добавление вакансии в хранилище."""
+    def get_data(self):
+        """Получает данные из файла."""
         pass
 
     @abstractmethod
-    def get_vacancies(self, criteria: Dict) -> List[Dict]:
-        """Получение вакансий по критериям."""
+    def add_data(self, data):
+        """Добавляет данные в файл."""
         pass
 
     @abstractmethod
-    def delete_vacancy(self, vacancy: Dict) -> None:
-        """Удаление вакансии из хранилища."""
+    def delete_data(self, key):
+        """Удаляет данные из файла по ключу."""
         pass

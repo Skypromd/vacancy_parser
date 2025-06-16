@@ -5,25 +5,18 @@ import re
 class Vacancy:
     """Класс для представления вакансии."""
 
-    __slots__ = ("_name", "_url", "_salary", "_description")
+    __slots__ = ('_name', '_url', '_salary', '_description')
 
-    def __init__(
-        self,
-        name: str,
-        url: str,
-        salary: Optional[dict | str],
-        description: Optional[str],
-    ):
-        print(
-            f"Инициализация Vacancy: name={name}, url={url}, type(url)={type(url)}, "
-            f"salary={salary}, type(salary)={type(salary)}, description={description}, "
-            f"type(description)={type(description)}"
-        )
+    def __init__(self, name: str, url: str, salary: Optional[dict | str],
+                 description: Optional[str]):
+        print(f"Инициализация Vacancy: name={name}, url={url}, "
+              f"type(url)={type(url)}, salary={salary}, "
+              f"type(salary)={type(salary)}, description={description}, "
+              f"type(description)={type(description)}")
         if url is None or (isinstance(url, str) and not url.strip()):
             url = "URL не указан"
-            print(
-                f"Предупреждение: url заменён на 'URL не указан' из-за: {url}, type={type(url)}"
-            )
+            print(f"Предупреждение: url заменён на 'URL не указан' "
+                  f"из-за: {url}, type={type(url)}")
         self._name = self._validate_name(name)
         self._url = self._validate_url(url)
         self._salary = self._validate_salary(salary)
@@ -42,9 +35,8 @@ class Vacancy:
         """Валидация URL вакансии."""
         print(f"Валидация url: {url}, type={type(url)}")
         if not url or not isinstance(url, str):
-            raise ValueError(
-                f"URL должен быть непустой строкой, получено: {url}, type={type(url)}"
-            )
+            raise ValueError(f"URL должен быть непустой строкой, "
+                             f"получено: {url}, type={type(url)}")
         return url
 
     @staticmethod
@@ -57,9 +49,9 @@ class Vacancy:
             return salary
         if not isinstance(salary, dict):
             return "Зарплата не указана"
-        salary_from = salary.get("from")
-        salary_to = salary.get("to")
-        currency = salary.get("currency", "RUR")
+        salary_from = salary.get('from')
+        salary_to = salary.get('to')
+        currency = salary.get('currency', 'RUR')
 
         if salary_from and salary_to:
             return f"{salary_from}-{salary_to} {currency}"
@@ -72,12 +64,13 @@ class Vacancy:
     @staticmethod
     def _validate_description(description: Optional[str]) -> str:
         """Валидация описания."""
-        print(f"Валидация description: {description}, type={type(description)}")
+        print(f"Валидация description: {description}, "
+              f"type={type(description)}")
         if description is None or not isinstance(description, str):
             return "Описание не указано"
         if not description.strip():
             return "Описание не указано"
-        cleaned = re.sub(r"<[^>]+>", "", description)
+        cleaned = re.sub(r'<[^>]+>', '', description)
         return cleaned.strip() or "Описание не указано"
 
     @property
@@ -90,11 +83,11 @@ class Vacancy:
 
     def __lt__(self, other) -> bool:
         """Сравнение вакансий по зарплате."""
-        print(f"Сравнение: self={self.name}, other={other}, type(other)={type(other)}")
+        print(f"Сравнение: self={self.name}, other={other}, "
+              f"type(other)={type(other)}")
         if not isinstance(other, Vacancy):
-            raise TypeError(
-                f"Сравнение возможно только с объектом Vacancy, получено: {type(other)}"
-            )
+            raise TypeError(f"Сравнение возможно только с объектом "
+                            f"Vacancy, получено: {type(other)}")
         return self.parse_salary() < other.parse_salary()
 
     def parse_salary(self) -> float:
@@ -103,49 +96,45 @@ class Vacancy:
             return 0
         try:
             parts = self._salary.split()
-            if "-" in parts[0]:
-                salary_from, salary_to = map(float, parts[0].split("-"))
+            if '-' in parts[0]:
+                salary_from, salary_to = map(float, parts[0].split('-'))
                 return (salary_from + salary_to) / 2
-            return float(parts[1]) if parts[0] in ["от", "до"] else float(parts[0])
+            return float(parts[1]) if parts[0] in ['от', 'до'] else float(parts[0])
         except (ValueError, IndexError):
             return 0
 
     def to_dict(self) -> dict:
         """Преобразование вакансии в словарь."""
-        print(
-            f"Преобразование в словарь: name={self._name}, url={self._url}, salary={self._salary}, "
-            f"description={self._description}"
-        )
+        print(f"Преобразование в словарь: name={self._name}, "
+              f"url={self._url}, salary={self._salary}, "
+              f"description={self._description}")
         return {
-            "name": self._name,
-            "alternate_url": self._url,
-            "salary": self._salary,
-            "snippet": {"requirement": self._description},
+            'name': self._name,
+            'alternate_url': self._url,
+            'salary': self._salary,
+            'snippet': {'requirement': self._description}
         }
 
     @classmethod
-    def cast_to_object_list(cls, vacancies: list[dict]) -> list["Vacancy"]:
+    def cast_to_object_list(cls, vacancies: list[dict]) -> list['Vacancy']:
         """Преобразование списка словарей в список объектов Vacancy."""
         result = []
         for i, vacancy in enumerate(vacancies):
-            name = vacancy.get("name", "")
-            url = vacancy.get("alternate_url") or vacancy.get("url", "")
-            salary = vacancy.get("salary")
-            description = vacancy.get("snippet", {}).get("requirement") or vacancy.get(
-                "description", ""
-            )
-            print(
-                f"Обработка вакансии #{i}: данные={vacancy}, name={name}, url={url}, "
-                f"type(url)={type(url)}, salary={salary}, description={description}"
-            )
+            name = vacancy.get('name', '')
+            url = vacancy.get('alternate_url') or vacancy.get('url', '')
+            salary = vacancy.get('salary')
+            description = (vacancy.get('snippet', {}).get('requirement') or
+                           vacancy.get('description', ''))
+            print(f"Обработка вакансии #{i}: данные={vacancy}, name={name}, "
+                  f"url={url}, type(url)={type(url)}, salary={salary}, "
+                  f"description={description}")
             try:
                 obj = cls(name, url, salary, description)
                 result.append(obj)
             except Exception as e:
-                print(
-                    f"Ошибка при обработке вакансии #{i}: данные={vacancy}, "
-                    f"тип ошибки={type(e).__name__}, сообщение={str(e)}"
-                )
+                print(f"Ошибка при обработке вакансии #{i}: данные={vacancy}, "
+                      f"тип ошибки={type(e).__name__}, сообщение={str(e)}")
                 continue
-        print(f"Результат cast_to_object_list: количество объектов={len(result)}")
+        print(f"Результат cast_to_object_list: "
+              f"количество объектов={len(result)}")
         return result

@@ -1,16 +1,15 @@
 from abc import ABC, abstractmethod
-from typing import List, Dict
 
 
 class AbstractAPI(ABC):
-    """Абстрактный класс для работы с API платформ с вакансиями."""
+    """Абстрактный класс для работы с API."""
 
     @abstractmethod
-    def connect(self) -> None:
-        """Подключение к API."""
+    def connect(self):
+        """Устанавливает соединение с API."""
         pass
 
     @abstractmethod
-    def get_vacancies(self, keyword: str) -> List[Dict]:
-        """Получение вакансий по ключевому слову."""
+    def get_vacancies(self, search_query):
+        """Получает список вакансий по ключевому слову."""
         pass
